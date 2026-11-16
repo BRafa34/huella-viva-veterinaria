@@ -1,0 +1,122 @@
+<header class="site-header">
+  <a class="brand" href="#inicio" aria-label="Huella Viva, inicio" (click)="closeMenu()">
+    <span class="brand-mark">hv</span><span class="brand-name">huella<span>viva</span><small>VETERINARIA · COCHABAMBA</small></span>
+  </a>
+  <button class="menu-toggle" type="button" aria-label="Abrir menú" (click)="mobileMenuOpen.update(v => !v)">☰</button>
+  <nav [class.open]="mobileMenuOpen()" aria-label="Navegación principal">
+    <a href="#servicios" (click)="closeMenu()">Servicios</a>
+    <a href="#especialidades" (click)="closeMenu()">Especialidades</a>
+    <a href="#nosotros" (click)="closeMenu()">Nosotros</a>
+    <a href="#precios" (click)="closeMenu()">Precios</a>
+    <a class="nav-contact" href="#contacto" (click)="closeMenu()">Hablemos <span>↗</span></a>
+  </nav>
+</header>
+
+@if (apiUnavailable()) {
+  <div class="api-notice" role="status">Conecta el backend y la base de datos para cargar el contenido de la veterinaria.</div>
+}
+
+<main>
+  @if (clinic(); as info) {
+    <section class="hero" id="inicio">
+      <div class="hero-visual">
+        <img class="hero-fallback" [src]="info.heroImageUrl" alt="Perro recibiendo atención veterinaria">
+        <video #heroVideo class="hero-video" [src]="info.heroVideoUrl" autoplay muted loop playsinline [poster]="info.heroImageUrl" (error)="onVideoError(heroVideo)" aria-hidden="true"></video>
+        <div class="hero-shade"></div>
+        <div class="hero-note"><span class="note-dot"></span> Cuidamos de verdad</div>
+        <div class="hero-caption">Un lugar seguro<br>para toda su vida.</div>
+      </div>
+      <div class="hero-copy">
+        <span class="eyebrow"><i></i> SU FAMILIA, TAMBIÉN ES LA NUESTRA</span>
+        <h1>Más salud.<br><em>Más momentos</em><br>juntos.</h1>
+        <p>{{ info.tagline }} Atención cercana para cada etapa, con profesionales que conocen su nombre y su historia.</p>
+        <div class="hero-actions"><a class="button button-dark" href="#contacto">Agenda una consulta <span>↗</span></a><a class="text-link" href="#servicios">Conoce lo que hacemos <span>↓</span></a></div>
+        <div class="hero-trust"><div class="trust-avatars"><span>🐕</span><span>🐈</span><span>🐾</span></div><div><strong>Un cuidado que se siente</strong><small>Para quienes siempre están contigo</small></div><span class="trust-star">✳</span></div>
+      </div>
+      <span class="hero-index">01 <i></i> 04</span>
+      @if (info.heroVideoCredit) { <a class="video-credit" [href]="info.heroVideoSource" target="_blank" rel="noreferrer">{{ info.heroVideoCredit }}</a> }
+    </section>
+
+    <section class="intro-strip"><p>Buena medicina, <em>corazón presente.</em></p><span>COCHABAMBA, BOLIVIA <b>✳</b> DESDE SIEMPRE CERCA DE ELLOS</span></section>
+
+    <section class="section services-section" id="servicios">
+      <div class="section-heading"><div><span class="eyebrow">LO QUE NECESITAN, AQUÍ</span><h2>Un cuidado completo,<br><em>en cada etapa.</em></h2></div><p>Desde su primera vacuna hasta esos pequeños cuidados del día a día. Nos ocupamos de su salud con atención y paciencia.</p></div>
+      <div class="services-grid">
+        @for (service of services(); track service.id) {
+          <article class="service-card" [class.featured]="service.featured"><span class="service-icon">{{ service.icon }}</span><span class="card-count">0{{ service.id }}</span><h3>{{ service.name }}</h3><p>{{ service.description }}</p><a href="#contacto" [attr.aria-label]="'Consultar por ' + service.name">↗</a></article>
+        } @empty { <p class="empty-note">Los servicios aparecerán aquí al conectar el backend.</p> }
+      </div>
+    </section>
+
+    <section class="specialty-band" id="especialidades">
+      <div class="specialty-intro"><span class="eyebrow eyebrow-light">EXPERIENCIA CON PROPÓSITO</span><h2>Hay mucho amor<br><em>en buenas manos.</em></h2><p>Cada mascota es distinta. Nuestro equipo combina experiencia y sensibilidad para darles una atención hecha a su medida.</p><a href="#contacto" class="button button-light">Conoce al equipo <span>↗</span></a></div>
+      <div class="specialty-list">
+        @for (specialty of specialties(); track specialty.id; let i = $index) {
+          <article><span class="specialty-number">0{{ i + 1 }}</span><div><h3>{{ specialty.name }}</h3><p>{{ specialty.description }}</p></div><span class="specialty-icon">{{ specialty.icon }}</span></article>
+        } @empty { <p class="empty-note">Nuestras especialidades se mostrarán aquí.</p> }
+      </div>
+      <span class="band-decoration">✳</span>
+    </section>
+
+    <section class="about-section section" id="nosotros">
+      <div class="about-gallery">
+        @for (photo of info.gallery; track photo.id; let i = $index) {
+          <figure [class]="'gallery-photo photo-' + (i + 1)"><img [src]="photo.imageUrl" [alt]="photo.alt" loading="lazy"></figure>
+        }
+        <div class="gallery-stamp"><span>♥</span><small>con cariño<br>siempre</small></div>
+      </div>
+      <div class="about-copy"><span class="eyebrow">UN POCO DE NUESTRA HISTORIA</span><h2>Una veterinaria<br>con <em>alma de hogar.</em></h2><p>{{ info.story }}</p><div class="about-facts"><div><span>01</span><strong>Atención<br>con calma</strong></div><div><span>02</span><strong>Medicina<br>responsable</strong></div><div><span>03</span><strong>Familias<br>acompañadas</strong></div></div><a href="#contacto" class="text-link">Ven a conocernos <span>↗</span></a></div>
+    </section>
+
+    <section class="price-section" id="precios">
+      <div class="price-top"><div><span class="eyebrow">TRANSPARENCIA, DESDE EL PRINCIPIO</span><h2>Precios claros.<br><em>Trato sincero.</em></h2></div><p>Cada mascota merece un plan adecuado. Estos precios son referenciales; te confirmamos el costo exacto luego de conocer su caso.</p></div>
+      <div class="price-list">
+        @for (item of prices(); track item.id) {
+          <article class="price-row"><span class="price-name">{{ item.name }}<small>{{ item.description }}</small></span><span class="price-note">{{ item.note }}</span><strong>{{ formatPrice(item) }}</strong></article>
+        } @empty { <p class="empty-note">El tarifario estará disponible al conectar el backend.</p> }
+      </div>
+      <a href="#contacto" class="price-cta">¿Tienes una consulta? Escríbenos <span>↗</span></a>
+    </section>
+
+    <section class="contact-section section" id="contacto">
+      <div class="contact-copy"><span class="eyebrow eyebrow-light">ESTAMOS A UN MENSAJE</span><h2>Su próxima visita<br>empieza con un <em>hola.</em></h2><p>Cuéntanos qué necesita tu compañero. Te responderemos con la atención que merece.</p>
+        <div class="contact-details"><div><span class="detail-icon">⌖</span><div><small>VISÍTANOS</small><p>{{ info.address }}</p></div></div><div><span class="detail-icon">◷</span><div><small>HORARIOS</small><p>{{ info.hours }}</p></div></div><div><span class="detail-icon">↗</span><div><small>LLÁMANOS</small><p><a [href]="'tel:' + info.phone">{{ info.phone }}</a><br><a [href]="'mailto:' + info.email">{{ info.email }}</a></p></div></div></div>
+      </div>
+      <form class="contact-form" #contactForm="ngForm" (ngSubmit)="onContactSubmit(contactForm.value)" novalidate>
+        <div class="form-title"><span>HOLA, NOS ENCANTARÍA ESCUCHARTE</span><i>✳</i></div>
+        <label>Tu nombre<input name="name" ngModel required minlength="2" maxlength="120" placeholder="¿Cómo te llamas?"></label>
+        <div class="form-row"><label>Correo electrónico<input name="email" ngModel required type="email" maxlength="160" placeholder="tu@correo.com"></label><label>Teléfono <small>(opcional)</small><input name="phone" ngModel maxlength="40" placeholder="+591"></label></div>
+        <label>¿En qué podemos ayudarte?<input name="subject" ngModel required minlength="3" maxlength="160" placeholder="Consulta, cita, información..."></label>
+        <label>Tu mensaje<textarea name="message" ngModel required minlength="10" maxlength="3000" rows="3" placeholder="Cuéntanos un poquito más..."></textarea></label>
+        @if (contactFeedback()) { <p class="form-feedback" [class.error]="contactError()" role="status">{{ contactFeedback() }}</p> }
+        <button class="button button-dark submit-button" type="submit" [disabled]="contactBusy() || contactForm.invalid">{{ contactBusy() ? 'Enviando…' : 'Enviar mensaje' }} <span>↗</span></button>
+        <small class="form-privacy">Tus datos solo se usarán para responder tu consulta.</small>
+      </form>
+    </section>
+  } @else if (apiUnavailable()) {
+    <section class="loading-state"><span class="loading-mark">hv</span><h1>Volvemos en un<br><em>momento.</em></h1><p>No pudimos conectar con el servidor. Verifica que la API y MySQL estén iniciados y recarga la página.</p></section>
+  } @else {
+    <section class="loading-state"><span class="loading-mark">hv</span><h1>Un lugar seguro<br><em>para toda su vida.</em></h1><p>Conectando con Huella Viva…</p></section>
+  }
+</main>
+
+<footer class="site-footer">
+  <a class="brand brand-footer" href="#inicio"><span class="brand-mark">hv</span><span class="brand-name">huella<span>viva</span><small>VETERINARIA · COCHABAMBA</small></span></a>
+  <p>Con cariño y cuidado, siempre.</p><span>© 2026 HUELLA VIVA · PROYECTO DE DEMOSTRACIÓN</span>
+</footer>
+
+<aside class="chat-widget" [class.chat-open]="chatOpen()">
+  @if (chatOpen()) {
+    <section class="chat-panel" aria-label="Chat con Huellita">
+      <header><span class="chat-avatar">✳</span><div><strong>Huellita</strong><small>Asistente virtual · Gemma 3</small></div><button type="button" aria-label="Cerrar chat" (click)="chatOpen.set(false)">×</button></header>
+      <div class="chat-messages" aria-live="polite">
+        @if (chatMessages().length === 0) { <div class="chat-welcome"><span>🐾</span><strong>¡Hola! Soy Huellita.</strong><p>¿En qué puedo ayudarte con tu compañero hoy?</p></div> }
+        @for (message of chatMessages(); track $index) { <p class="chat-bubble" [class.from-user]="message.role === 'user'">{{ message.content }}</p> }
+        @if (chatBusy()) { <p class="chat-bubble typing">Huellita está escribiendo<span>…</span></p> }
+      </div>
+      <form class="chat-form" (ngSubmit)="sendChat()"><input name="chatInput" [(ngModel)]="chatInput" maxlength="1200" placeholder="Escribe tu mensaje…" aria-label="Mensaje para Huellita"><button type="submit" aria-label="Enviar mensaje" [disabled]="chatBusy() || !chatInput.trim()">↑</button></form>
+      <small class="chat-disclaimer">No reemplaza una consulta veterinaria.</small>
+    </section>
+  }
+  <button class="chat-launcher" type="button" (click)="chatOpen.update(v => !v)" [attr.aria-label]="chatOpen() ? 'Cerrar chat' : 'Abrir chat con Huellita'"><span>{{ chatOpen() ? '×' : '✳' }}</span>@if (!chatOpen()) { <span class="launcher-label">¿Hablamos?</span> }</button>
+</aside>
